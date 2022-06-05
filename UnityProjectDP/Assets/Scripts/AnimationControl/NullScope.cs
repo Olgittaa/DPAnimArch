@@ -4,6 +4,22 @@ namespace OALProgramControl
 {
     public class NullScope : EXEAbstractScope
     {
+        private static NullScope _instance;
+
+        private NullScope()
+        {
+        }
+
+        public static NullScope Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    return new NullScope();
+                return _instance;
+            }
+        }
+
         public override EXEPrimitiveVariable FindPrimitiveVariableByName(string Name)
         {
             return null;

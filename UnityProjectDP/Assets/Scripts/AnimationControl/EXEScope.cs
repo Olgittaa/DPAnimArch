@@ -6,7 +6,6 @@ namespace OALProgramControl
 {
     public class EXEScope : EXEAbstractScope
     {
-
         public List<EXECommand> Commands { get; protected set; }
 
         public String OALCode;
@@ -16,7 +15,7 @@ namespace OALProgramControl
             this.PrimitiveVariables = new List<EXEPrimitiveVariable>();
             this.ReferencingVariables = new List<EXEReferencingVariable>();
             this.SetReferencingVariables = new List<EXEReferencingSetVariable>();
-            this.SuperScope = new NullScope();
+            this.SuperScope = NullScope.Instance;
             this.Commands = new List<EXECommand>();
         }
 
