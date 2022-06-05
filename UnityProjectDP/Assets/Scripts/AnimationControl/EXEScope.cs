@@ -4,11 +4,8 @@ using System.Linq;
 
 namespace OALProgramControl
 {
-    public class EXEScope : EXECommand
+    public class EXEScope : EXEAbstractScope
     {
-        private List<EXEPrimitiveVariable> PrimitiveVariables;
-        private List<EXEReferencingVariable> ReferencingVariables;
-        private List<EXEReferencingSetVariable> SetReferencingVariables;
 
         public List<EXECommand> Commands { get; protected set; }
 
@@ -19,9 +16,10 @@ namespace OALProgramControl
             this.PrimitiveVariables = new List<EXEPrimitiveVariable>();
             this.ReferencingVariables = new List<EXEReferencingVariable>();
             this.SetReferencingVariables = new List<EXEReferencingSetVariable>();
-            this.SuperScope = null;
+            this.SuperScope = new NullScope();
             this.Commands = new List<EXECommand>();
         }
+
         public EXEScope(EXEScope SuperScope, EXECommand[] Commands)
         {
             this.PrimitiveVariables = new List<EXEPrimitiveVariable>();
@@ -36,6 +34,7 @@ namespace OALProgramControl
                 this.AddCommand(Command);
             }
         }
+
         protected override Boolean Execute(OALProgram OALProgram)
         {
             AddCommandsToStack(OALProgram, this.Commands);
@@ -51,7 +50,7 @@ namespace OALProgramControl
         public Dictionary<String, String> GetStateDictRecursive()
         {
             Dictionary<String, String> Result = new Dictionary<String, String>();
-            EXEScope CurrentScope = this;
+            EXEAbstractScope CurrentScope = this;
             while (CurrentScope != null)
             {
                 foreach (EXEPrimitiveVariable CurrentVariable in CurrentScope.PrimitiveVariables)
@@ -68,16 +67,18 @@ namespace OALProgramControl
         public Dictionary<String, String> GetRefStateDictRecursive()
         {
             Dictionary<String, String> Result = new Dictionary<String, String>();
-            EXEScope CurrentScope = this;
+            EXEAbstractScope CurrentScope = this;
             while (CurrentScope != null)
             {
                 foreach (EXEReferencingVariable CurrentVariable in CurrentScope.ReferencingVariables)
                 {
                     Result[CurrentVariable.Name] = CurrentVariable.ClassName;
                 }
+
                 foreach (EXEReferencingSetVariable CurrentVariable in CurrentScope.SetReferencingVariables)
                 {
-                    Result[CurrentVariable.Name + "[" + CurrentVariable.ValidVariableCount() + "]"] = CurrentVariable.ClassName;
+                    Result[CurrentVariable.Name + "[" + CurrentVariable.ValidVariableCount() + "]"] =
+                        CurrentVariable.ClassName;
                 }
 
                 CurrentScope = CurrentScope.SuperScope;
@@ -94,11 +95,13 @@ namespace OALProgramControl
             {
                 return Result;
             }
+
             CDClassInstance Inst = Var.RetrieveReferencedClassInstance(ExecutionSpace);
             if (Inst == null)
             {
                 return Result;
             }
+
             foreach (var Attribute in Inst.GetStateWithoutID())
             {
                 Result[VarName + "." + Attribute.Key] = Attribute.Value;
@@ -106,10 +109,11 @@ namespace OALProgramControl
 
             return Result;
         }
+
         public Dictionary<String, String> GetRefStateAttrsDictRecursive(CDClassPool ExecutionSpace)
         {
             Dictionary<String, String> Result = new Dictionary<String, String>();
-            EXEScope CurrentScope = this;
+            EXEAbstractScope CurrentScope = this;
             while (CurrentScope != null)
             {
                 foreach (EXEReferencingVariable Var in CurrentScope.ReferencingVariables)
@@ -119,6 +123,7 @@ namespace OALProgramControl
                     {
                         continue;
                     }
+
                     foreach (var Attribute in Inst.GetStateWithoutID())
                     {
                         Result[Var.Name + "." + Attribute.Key] = Attribute.Value;
@@ -140,6 +145,7 @@ namespace OALProgramControl
             {
                 return Result;
             }
+
             int i = 0;
             Console.WriteLine(VarName + " has cardinality " + SetVar.GetReferencingVariables().Count());
             foreach (EXEReferencingVariable Var in SetVar.GetReferencingVariables())
@@ -150,17 +156,19 @@ namespace OALProgramControl
                     i++;
                     continue;
                 }
+
                 foreach (var Attribute in Inst.GetStateWithoutID())
                 {
                     Result[VarName + "[" + i + "]." + Attribute.Key] = Attribute.Value;
                 }
+
                 i++;
             }
 
             return Result;
         }
 
-        public Dictionary<String, String> GetAllHandleStateAttrsDictRecursive(CDClassPool ExecutionSpace)
+        public override Dictionary<String, String> GetAllHandleStateAttrsDictRecursive(CDClassPool ExecutionSpace)
         {
             Dictionary<String, String> Result = new Dictionary<String, String>();
             Dictionary<String, String> Temp;
@@ -170,11 +178,13 @@ namespace OALProgramControl
                 Temp = this.GetRefStateAttrsDictRecursive(ExecutionSpace, Var.Name);
                 Temp.ToList().ForEach(x => Result.Add(x.Key, x.Value));
             }
+
             foreach (EXEReferencingSetVariable Var in this.SetReferencingVariables)
             {
                 Temp = this.GetSetRefStateAttrsDictRecursive(ExecutionSpace, Var.Name);
                 Temp.ToList().ForEach(x => Result.Add(x.Key, x.Value));
             }
+
             if (this.SuperScope != null)
             {
                 Temp = this.SuperScope.GetAllHandleStateAttrsDictRecursive(ExecutionSpace);
@@ -196,6 +206,7 @@ namespace OALProgramControl
 
             return Result;
         }
+
         public bool AddVariable(EXEReferencingVariable Variable)
         {
             bool Result = false;
@@ -208,6 +219,7 @@ namespace OALProgramControl
 
             return Result;
         }
+
         public bool AddVariable(EXEReferencingSetVariable Variable)
         {
             bool Result = false;
@@ -241,15 +253,45 @@ namespace OALProgramControl
         }
 
         // SetUloh1 - this method is done. Do the same with two similar methods below it
-        public EXEPrimitiveVariable FindPrimitiveVariableByName(String Name)
+        public override EXEPrimitiveVariable FindPrimitiveVariableByName(String Name)
         {
             EXEPrimitiveVariable Result = null;
             EXEScope CurrentScope = this;
+            EXEPrimitiveVariable exePrimitiveVariable =
+                CurrentScope.PrimitiveVariables.Find(variable => variable.Name == Name);
+            if (exePrimitiveVariable != null)
+            {
+                Result = exePrimitiveVariable;
+            }
+            else
+            {
+                CurrentScope.SuperScope.FindPrimitiveVariableByName(Name);
+            }
+
+            return Result;
+        }
+
+        public EXEReferenceHandle FindReferenceHandleByName(String Name)
+        {
+            EXEReferenceHandle Result = FindReferencingVariableByName(Name);
+            if (Result == null)
+            {
+                Result = FindSetReferencingVariableByName(Name);
+            }
+
+            return Result;
+        }
+
+        public EXEReferencingVariable FindReferencingVariableByName(String Name)
+        {
+            EXEReferencingVariable Result = null;
+            EXEAbstractScope CurrentScope = this;
+
             while (CurrentScope != null)
             {
-                foreach (EXEPrimitiveVariable CurrentVariable in CurrentScope.PrimitiveVariables)
+                foreach (EXEReferencingVariable CurrentVariable in CurrentScope.ReferencingVariables)
                 {
-                    if (CurrentVariable.Name == Name)
+                    if (String.Equals(CurrentVariable.Name, Name))
                     {
                         Result = CurrentVariable;
                         break;
@@ -266,42 +308,10 @@ namespace OALProgramControl
 
             return Result;
         }
-        public EXEReferenceHandle FindReferenceHandleByName(String Name)
-        {
-            EXEReferenceHandle Result = FindReferencingVariableByName(Name);
-            if (Result == null)
-            {
-                Result = FindSetReferencingVariableByName(Name);
-            }
-            return Result;
-        }
-        public EXEReferencingVariable FindReferencingVariableByName(String Name)
-        {
-            EXEReferencingVariable Result = null;
-            EXEScope CurrentScope = this;
 
-            while (CurrentScope != null) {
-                foreach (EXEReferencingVariable CurrentVariable in CurrentScope.ReferencingVariables)
-                {
-                    if (String.Equals(CurrentVariable.Name, Name)){
-                        Result = CurrentVariable;
-                        break;
-                    }
-                }
-               
-                if (Result != null)
-                {
-                    break;
-                }
-
-                CurrentScope = CurrentScope.SuperScope;
-            }
-            return Result;
-        }
         public EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
         {
-
-            EXEScope CurrentScope = this;
+            EXEAbstractScope CurrentScope = this;
 
             while (CurrentScope != null)
             {
@@ -312,8 +322,10 @@ namespace OALProgramControl
                         return ReferencingSetVariable;
                     }
                 }
+
                 CurrentScope = CurrentScope.SuperScope;
             }
+
             return null;
         }
 
@@ -322,15 +334,16 @@ namespace OALProgramControl
             this.Commands.Add(Command);
             if (Command.IsComposite())
             {
-                ((EXEScope)Command).SetSuperScope(this);
+                ((EXEScope) Command).SetSuperScope(this);
             }
         }
+
         public override Boolean IsComposite()
         {
             return true;
         }
 
-        public bool UnsetReferencingVariables(String ClassName, long InstanceID)
+        public override bool UnsetReferencingVariables(String ClassName, long InstanceID)
         {
             bool Result = true;
             foreach (EXEReferencingVariable Variable in this.ReferencingVariables)
@@ -340,10 +353,12 @@ namespace OALProgramControl
                     Variable.ReferencedInstanceId = -1;
                 }
             }
+
             foreach (EXEReferencingSetVariable SetVariable in this.SetReferencingVariables)
             {
                 SetVariable.UnsetVariables(InstanceID);
             }
+
             if (this.SuperScope != null)
             {
                 Result &= this.SuperScope.UnsetReferencingVariables(ClassName, InstanceID);
@@ -356,7 +371,8 @@ namespace OALProgramControl
         {
             return this.PrimitiveVariables.Count;
         }
-        public int ValidVariableReferencingCountRecursive()
+
+        public override int ValidVariableReferencingCountRecursive()
         {
             int Result = 0;
             foreach (EXEReferencingVariable Var in this.ReferencingVariables)
@@ -366,16 +382,20 @@ namespace OALProgramControl
                     ++Result;
                 }
             }
+
             if (this.SuperScope != null)
             {
                 Result += this.SuperScope.ValidVariableReferencingCountRecursive();
             }
+
             return Result;
         }
+
         public int VariableReferencingCount()
         {
             return this.ReferencingVariables.Count;
         }
+
         public int NonEmptyVariableSetReferencingCountRecursive()
         {
             int Result = 0;
@@ -386,12 +406,15 @@ namespace OALProgramControl
                     ++Result;
                 }
             }
+
             if (this.SuperScope != null)
             {
                 Result += this.SuperScope.ValidVariableReferencingCountRecursive();
             }
+
             return Result;
         }
+
         public int VariableSetReferencingCount()
         {
             return this.SetReferencingVariables.Count;
@@ -417,28 +440,32 @@ namespace OALProgramControl
             return Result;
         }
 
-        public List<(String, String)> GetReferencingVariablesByIDRecursive(long ID)
+        public override List<(String, String)> GetReferencingVariablesByIDRecursive(long ID)
         {
             List<(String, String)> Vars = new List<(String, String)>();
             foreach (EXEReferencingVariable Var in this.ReferencingVariables)
             {
                 if (Var.ReferencedInstanceId == ID)
                 {
-                    Vars.Add((Var.ClassName ,Var.Name));
+                    Vars.Add((Var.ClassName, Var.Name));
                 }
             }
+
             if (this.SuperScope != null)
             {
                 Vars = Vars.Concat(this.SuperScope.GetReferencingVariablesByIDRecursive(ID)).ToList();
             }
+
             return Vars;
         }
+
         public void ClearVariables()
         {
             this.PrimitiveVariables.Clear();
             this.ReferencingVariables.Clear();
             this.SetReferencingVariables.Clear();
         }
+
         public void ClearVariablesRecursive()
         {
             this.ClearVariables();
@@ -447,7 +474,7 @@ namespace OALProgramControl
             {
                 if (Command is EXEScope)
                 {
-                    ((EXEScope)Command).ClearVariablesRecursive();
+                    ((EXEScope) Command).ClearVariablesRecursive();
                 }
             }
         }
@@ -459,6 +486,7 @@ namespace OALProgramControl
             {
                 Result += Command.ToCode(Indent);
             }
+
             return Result;
         }
     }

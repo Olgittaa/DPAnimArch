@@ -4,7 +4,7 @@ namespace OALProgramControl
 {
     public abstract class EXECommand
     {
-        protected EXEScope SuperScope { get; set; }
+        public EXEAbstractScope SuperScope { get; set; }
 
         public Boolean PerformExecution(OALProgram OALProgram)
         {
@@ -13,17 +13,17 @@ namespace OALProgramControl
             return Result;
         }
         protected abstract Boolean Execute(OALProgram OALProgram);
-        public EXEScope GetSuperScope()
+        public EXEAbstractScope GetSuperScope()
         {
             return this.SuperScope;
         }
-        public virtual void SetSuperScope(EXEScope SuperScope)
+        public virtual void SetSuperScope(EXEAbstractScope SuperScope)
         {
             this.SuperScope = SuperScope;
         }
-        protected EXEScope GetTopLevelScope()
+        protected EXEAbstractScope GetTopLevelScope()
         {
-            EXEScope CurrentScope = this.SuperScope;
+            EXEAbstractScope CurrentScope = this.SuperScope;
 
             while (CurrentScope.SuperScope != null)
             {
