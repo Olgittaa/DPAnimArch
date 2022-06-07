@@ -12,6 +12,7 @@ using AnimArch.Visualization.Animating;
 using AnimArch.Visualization.UI;
 using AnimArch.XMIParsing;
 using AnimArch.Extensions.Unity;
+using Assets.Scripts.Visualization.ClassDiagram;
 
 namespace AnimArch.Visualization.Diagrams
 {
@@ -19,7 +20,7 @@ namespace AnimArch.Visualization.Diagrams
     {
         public Graph graph;
         public List<ClassInDiagram> Classes { get; private set; }
-        public List<RelationInDiagram> Relations { get; private set; }
+        public List<AbstractRelation> Relations { get; private set; }
 
         //Awake is called before the first frame and before Start()
         private void Awake()
@@ -45,14 +46,14 @@ namespace AnimArch.Visualization.Diagrams
             // Get rid of already rendered relations in diagram.
             if (Relations != null)
             {
-                foreach (RelationInDiagram Relation in Relations)
+                foreach (AbstractRelation Relation in Relations)
                 {
                     Destroy(Relation.VisualObject);
                 }
 
                 Relations.Clear();
             }
-            Relations = new List<RelationInDiagram>();
+            Relations = new List<AbstractRelation>();
 
             if (graph != null)
             {
@@ -77,28 +78,12 @@ namespace AnimArch.Visualization.Diagrams
                 AnimationData.Instance.diagramId++;
             }
 
-            //fakeObjects();
-
             //Generate UI objects displaying the diagram
             Generate();
 
 
             //Set the layout of diagram so it is coresponding to EA view
             ManualLayout();
-            //AutoLayout();
-
-            /*Classes
-                .Where(Class => Class.isObject)
-                .ForEach(Class => Class.VisualObject.GetComponent<RectTransform>().Shift(0, 0, 200));
-
-
-            ClassInDiagram CLASS = FindClassByName("ASTLeaf");
-            Classes
-                .Where(Class => Class.isObject)
-                .ForEach
-                (
-                    Class => CreateInterGraphLine(graph, Class.VisualObject, CLASS.VisualObject)
-                );*/
             DiagramPool.Instance.ObjectDiagram.LoadDiagram();
         }
         public Graph CreateGraph()
@@ -181,35 +166,12 @@ namespace AnimArch.Visualization.Diagrams
                 XMIRelationList = new List<Relation>();
             }
 
-            CDRelationship TempCDRelationship;
-
             //Parse all Relations between classes
             foreach (Relation Relation in XMIRelationList)
             {
                 Relation.FromClass = Relation.SourceModelName.Replace(" ", "_");
                 Relation.ToClass = Relation.TargetModelName.Replace(" ", "_");
-                //Here you assign prefabs for each type of relation
-                switch (Relation.PropertiesEa_type)
-                {
-                    case "Association":
-                        switch (Relation.ProperitesDirection)
-                        {
-                            case "Source -> Destination": Relation.PrefabType = DiagramPool.Instance.associationSDPrefab; break;
-                            case "Destination -> Source": Relation.PrefabType = DiagramPool.Instance.associationDSPrefab; break;
-                            case "Bi-Directional": Relation.PrefabType = DiagramPool.Instance.associationFullPrefab; break;
-                            default: Relation.PrefabType = DiagramPool.Instance.associationNonePrefab; break;
-                        }
-                        break;
-                    case "Generalization": Relation.PrefabType = DiagramPool.Instance.generalizationPrefab; break;
-                    case "Dependency": Relation.PrefabType = DiagramPool.Instance.dependsPrefab; break;
-                    case "Realisation": Relation.PrefabType = DiagramPool.Instance.realisationPrefab; break;
-                    default: Relation.PrefabType = DiagramPool.Instance.associationNonePrefab; break;
-                }
-
-                TempCDRelationship = OALProgram.Instance.RelationshipSpace.SpawnRelationship(Relation.FromClass, Relation.ToClass);
-                Relation.OALName = TempCDRelationship.RelationshipName;
-
-                Relations.Add(new RelationInDiagram() { XMIParsedRelation = Relation, RelationInfo = TempCDRelationship });
+                Relations.Add(RelationFactory.Instance.CreateRelation(Relation.FromClass, Relation.ToClass, Relation.PropertiesEa_type, Relation.ProperitesDirection));
             }
         }
 
@@ -288,7 +250,7 @@ namespace AnimArch.Visualization.Diagrams
             }
 
             //Render Relations between classes
-            foreach (RelationInDiagram rel in Relations)
+            foreach (AbstractRelation rel in Relations)
             {
                 GameObject prefab = rel.XMIParsedRelation.PrefabType;
                 if (prefab == null)
@@ -470,7 +432,7 @@ namespace AnimArch.Visualization.Diagrams
         {
             return Relations
                 .Where(relation => string.Equals(RelationName, relation.XMIParsedRelation.OALName))
-                .FirstOrCustomDefault<RelationInDiagram, string>(relationInDiagram => relationInDiagram.XMIParsedRelation.FromClass, "");
+                .FirstOrCustomDefault<AbstractRelation, string>(relationInDiagram => relationInDiagram.XMIParsedRelation.FromClass, "");
         }
         //Fix used to minimalize relation displaying bug
         private IEnumerator QuickFix(GameObject g)
@@ -516,18 +478,8 @@ namespace AnimArch.Visualization.Diagrams
                         300 * i++
                     );
             }
-
-            /*GameObject Line = Instantiate(interGraphLinePrefab);
-            Line.GetComponent<LineRenderer>().SetPositions(
-                new Vector3[]
-                {
-                    dos[0].VisualObject.GetComponent<RectTransform>().position,
-                    dos[1].VisualObject.GetComponent<RectTransform>().position
-                }
-            );
-            Line.GetComponent<LineRenderer>().widthMultiplier = 6f;*/
         }
-        // Lukas
+
         public class DiagramObject
         {
             public string name;
@@ -544,7 +496,7 @@ namespace AnimArch.Visualization.Diagrams
                 this.Attributes = Attributes;
             }
         }
-        // Lukas
+
         public void AddDiagramObject(DiagramObject DiagramObject)
         {
             DiagramObject.VisualObject = graph.AddNode();
@@ -567,55 +519,6 @@ namespace AnimArch.Visualization.Diagrams
                     isObject = true
                 }
             );
-            /*
-            GameObject prefab = dependsPrefab;
-            GameObject startingClass = FindClassByName(DiagramObject.VisualObject.name)?.VisualObject;
-            GameObject finishingClass = FindClassByName(DiagramObject.className)?.VisualObject;
-            if (startingClass != null && finishingClass != null)
-            {
-                GameObject edge = graph.AddEdge(startingClass, finishingClass, prefab);
-                Relations.Add
-                (
-                    new RelationInDiagram()
-                    {
-                        VisualObject = edge,
-                        XMIParsedRelation
-                            = new Relation()
-                            {
-                                OALName = DiagramObject.VisualObject.name,
-                                FromClass = startingClass.name,
-                                ToClass = finishingClass.name
-                            },
-                        RelationInfo
-                            = new CDRelationship
-                            (
-                                startingClass.name,
-                                finishingClass.name,
-                                DiagramObject.VisualObject.name
-                            )
-                    }
-                );
-
-                //Quickfix
-                if (edge.gameObject.transform.childCount > 0)
-                {
-                    StartCoroutine(QuickFix(edge.transform.GetChild(0).gameObject));
-                }
-
-                edge.GetComponent<UEdge>().GraphEdge.Color = Color.cyan;
-            }
-            else
-            {
-                Debug.LogError
-                (
-                    string.Format
-                    (
-                        "Can't find specified Edge \"{0}\"->\"{1}\"",
-                        DiagramObject.VisualObject.name,
-                        DiagramObject.className
-                    )
-                );
-            }*/
         }
     }
 }
