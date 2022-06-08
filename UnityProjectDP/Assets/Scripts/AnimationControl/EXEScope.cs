@@ -46,6 +46,11 @@ namespace OALProgramControl
             OALProgram.CommandStack.Enqueue(Commands);
         }
 
+        public override void SetSuperScope(EXEScope SuperScope)
+        {
+            this.SuperScope = SuperScope;
+        }
+
         public Dictionary<String, String> GetStateDictRecursive()
         {
             Dictionary<String, String> Result = new Dictionary<String, String>();
@@ -193,7 +198,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEPrimitiveVariable Variable)
+        public override bool AddVariable(EXEPrimitiveVariable Variable)
         {
             bool Result = false;
 
@@ -206,7 +211,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEReferencingVariable Variable)
+        public override bool AddVariable(EXEReferencingVariable Variable)
         {
             bool Result = false;
 
@@ -219,7 +224,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEReferencingSetVariable Variable)
+        public override bool AddVariable(EXEReferencingSetVariable Variable)
         {
             bool Result = false;
 
@@ -232,7 +237,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool VariableNameExists(String VariableName)
+        public override bool VariableNameExists(String VariableName)
         {
             bool Result = false;
             if (FindPrimitiveVariableByName(VariableName) != null)
@@ -281,7 +286,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public EXEReferencingVariable FindReferencingVariableByName(String Name)
+        public override EXEReferencingVariable FindReferencingVariableByName(String Name)
         {
             EXEReferencingVariable Result = null;
             EXEAbstractScope CurrentScope = this;
@@ -308,7 +313,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
+        public override EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
         {
             EXEAbstractScope CurrentScope = this;
 
@@ -419,7 +424,7 @@ namespace OALProgramControl
             return this.SetReferencingVariables.Count;
         }
 
-        public Boolean DestroyReferencingVariable(String VariableName)
+        public override Boolean DestroyReferencingVariable(String VariableName)
         {
             Boolean Result = false;
 

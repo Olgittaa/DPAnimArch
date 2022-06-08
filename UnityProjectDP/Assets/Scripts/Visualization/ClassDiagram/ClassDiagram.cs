@@ -171,7 +171,7 @@ namespace AnimArch.Visualization.Diagrams
             {
                 Relation.FromClass = Relation.SourceModelName.Replace(" ", "_");
                 Relation.ToClass = Relation.TargetModelName.Replace(" ", "_");
-                Relations.Add(RelationFactory.Instance.CreateRelation(Relation.FromClass, Relation.ToClass, Relation.PropertiesEa_type, Relation.ProperitesDirection));
+                Relations.Add(RelationFactory.Instance.CreateRelation(Relation, Relation.PropertiesEa_type));
             }
         }
 

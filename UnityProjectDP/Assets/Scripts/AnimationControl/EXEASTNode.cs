@@ -9,8 +9,8 @@ namespace OALProgramControl
     public interface EXEASTNode
     {
         String GetNodeValue();
-        String Evaluate(EXEScope Scope, CDClassPool ExecutionSpace);
-        bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace);
+        String Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace);
+        bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace);
         void PrintPretty(string indent, bool last);
         string ToCode();
     }

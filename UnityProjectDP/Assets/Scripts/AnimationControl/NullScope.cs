@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace OALProgramControl
@@ -43,6 +44,41 @@ namespace OALProgramControl
         public override List<(string, string)> GetReferencingVariablesByIDRecursive(long ID)
         {
             return null;
+        }
+
+        public override void SetSuperScope(EXEScope SuperScope) { }
+
+        public override EXEReferencingVariable FindReferencingVariableByName(String Name)
+        {
+            return null;
+        }
+        public override bool VariableNameExists(String VariableName)
+        {
+            return false;
+        }
+
+        public override EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
+        {
+            return null;
+        }
+
+        public override Boolean DestroyReferencingVariable(String VariableName)
+        {
+            return false;
+        }
+
+        public override bool AddVariable(EXEReferencingSetVariable Variable)
+        {
+            return false;
+        }
+
+        public override bool AddVariable(EXEPrimitiveVariable Variable)
+        {
+            return false;
+        }
+        public override bool AddVariable(EXEReferencingVariable Variable)
+        {
+            return false;
         }
 
         protected override bool Execute(OALProgram OALProgram)

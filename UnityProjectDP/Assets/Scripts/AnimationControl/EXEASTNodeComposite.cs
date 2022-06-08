@@ -49,7 +49,7 @@ namespace OALProgramControl
         {
             return this.Operation;
         }
-        public String Evaluate(EXEScope Scope, CDClassPool ExecutionSpace)
+        public String Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             String Result = null;
             EXEExpressionEvaluator Evaluator = new EXEExpressionEvaluator();
@@ -96,7 +96,7 @@ namespace OALProgramControl
             else if (HandleEvaluator.IsHandleOperator(this.Operation))
             {
                 Console.WriteLine("We have handle operator");
-                Result = HandleEvaluator.Evaluate(this.Operation, this.Operands.Select(x => ((EXEASTNodeLeaf)x).GetNodeValue()).ToList(), Scope);
+                Result = HandleEvaluator.Evaluate(this.Operation, this.Operands.Select(x => ((EXEASTNodeLeaf)x).GetNodeValue()).ToList(), (EXEScope)Scope);
             }
             // If we have access operator - we either access attribute or have decimal number. There are always 2 operands
             else if (".".Equals(this.Operation) && this.Operands.Count == 2)
@@ -111,13 +111,13 @@ namespace OALProgramControl
                     && EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
                 )
                 {
-                    Result = AccessEvaluator.EvaluateAttributeValue(this.Operands[0].GetNodeValue(), this.Operands[1].GetNodeValue(), Scope, ExecutionSpace);
+                    Result = AccessEvaluator.EvaluateAttributeValue(this.Operands[0].GetNodeValue(), this.Operands[1].GetNodeValue(), (EXEScope)Scope, ExecutionSpace);
                 }
             }
             return Result;
         }
 
-        public bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace)
+        public bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             bool Result = false;
             EXEExpressionEvaluator Evaluator = new EXEExpressionEvaluator();
@@ -139,7 +139,7 @@ namespace OALProgramControl
             // If we have handle operators
             else if (HandleEvaluator.IsHandleOperator(this.Operation))
             {
-                if (this.Operands.Count() == 1 && Scope.FindReferenceHandleByName(((EXEASTNodeLeaf)this.Operands[0]).GetNodeValue()) != null)
+                if (this.Operands.Count() == 1 && ((EXEScope)Scope).FindReferenceHandleByName(((EXEASTNodeLeaf)this.Operands[0]).GetNodeValue()) != null)
                 {
                     Result = true;
                 }
@@ -157,7 +157,7 @@ namespace OALProgramControl
                     && EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
                 )
                 {
-                    EXEReferencingVariable Variable = Scope.FindReferencingVariableByName(this.Operands[0].GetNodeValue());
+                    EXEReferencingVariable Variable = ((EXEScope)Scope).FindReferencingVariableByName(this.Operands[0].GetNodeValue());
                     if (Variable == null)
                     {
                         return false;

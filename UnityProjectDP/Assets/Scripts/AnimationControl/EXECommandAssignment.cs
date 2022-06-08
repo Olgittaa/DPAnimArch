@@ -64,7 +64,7 @@ namespace OALProgramControl
             {
             
                 EXEReferenceEvaluator RefEvaluator = new EXEReferenceEvaluator();
-                Result = RefEvaluator.SetAttributeValue(this.VariableName, this.AttributeName, SuperScope, OALProgram.ExecutionSpace, AssignedValue);
+                Result = RefEvaluator.SetAttributeValue(this.VariableName, this.AttributeName, (EXEScope)SuperScope, OALProgram.ExecutionSpace, AssignedValue);
             }
 
             return Result;

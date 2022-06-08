@@ -16,7 +16,7 @@ namespace OALProgramControl
         {
             return this.Value;
         }
-        public String Evaluate(EXEScope Scope, CDClassPool ExecutionSpace)
+        public String Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             String Result = null;
 
@@ -40,13 +40,13 @@ namespace OALProgramControl
                     return ThisVariable.Value;
                 }
 
-                EXEReferencingVariable ThisRefVariable = Scope.FindReferencingVariableByName(this.Value);
+                EXEReferencingVariable ThisRefVariable = ((EXEScope)Scope).FindReferencingVariableByName(this.Value);
                 if (ThisRefVariable != null)
                 {
                     return ThisRefVariable.ReferencedInstanceId.ToString();
                 }
 
-                EXEReferencingSetVariable ThisRefSetVariable = Scope.FindSetReferencingVariableByName(this.Value);
+                EXEReferencingSetVariable ThisRefSetVariable = ((EXEScope)Scope).FindSetReferencingVariableByName(this.Value);
                 if (ThisRefSetVariable != null)
                 {
                     return String.Join(",", ThisRefSetVariable.GetReferencingVariables().Select(variable => variable.ReferencedInstanceId.ToString()).ToList());
@@ -59,7 +59,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace)
+        public bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             bool Result = false;
             if (!EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Value)))
@@ -68,7 +68,7 @@ namespace OALProgramControl
             }
             else
             {
-                Result = Scope.VariableNameExists(this.Value);
+                Result = ((EXEScope)Scope).VariableNameExists(this.Value);
             }
             return Result;
         }

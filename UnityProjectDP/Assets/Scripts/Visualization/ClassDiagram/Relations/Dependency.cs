@@ -12,5 +12,14 @@ namespace Assets.Scripts.Visualization.ClassDiagram
             XMIParsedRelation.OALName = RelationInfo.RelationshipName;
             XMIParsedRelation.PrefabType = DiagramPool.Instance.dependsPrefab;
         }
+
+        public Dependency(Relation relation)
+        {
+            RelationInfo = OALProgram.Instance.RelationshipSpace.SpawnRelationship(relation.FromClass, relation.ToClass);
+            relation.OALName = RelationInfo.RelationshipName;
+            relation.PrefabType = DiagramPool.Instance.dependsPrefab;
+
+            XMIParsedRelation = relation;
+        }
     }
 }
