@@ -2,18 +2,14 @@ using OALProgramControl;
 
 namespace Assets.Scripts.Visualization.Animation
 {
-    abstract class AnimationStep
+    public abstract class AnimationStep
     {
-        protected OALCall call;
         protected int step;
 
-        float timeModifier = 1f;
+        protected readonly AnimArch.Visualization.Animating.Animation Animation
+            = Singleton<AnimArch.Visualization.Animating.Animation>.Instance;
 
-        public OALCall Call
-        {
-            get => Call;
-            set => Call = value;
-        }
+        protected OALCall Call { get; set; }
 
         public int Step
         {
@@ -21,89 +17,121 @@ namespace Assets.Scripts.Visualization.Animation
             set => step = value;
         }
 
-        public float TimeModifier
-        {
-            get => timeModifier;
-            set => timeModifier = value;
-        }
-
-        public void AddStep()
-        {
-            step++;
-        }
 
         public abstract void Execute();
-    }
 
-    class ZeroAnimationStep : AnimationStep
-    {
-        public override void Execute()
+        public bool Check()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance
-                .HighlightClass(Call.CallerClassName, true);
+            return step < 7;
         }
     }
 
-    class FirstAnimationStep : AnimationStep
+    internal class ZeroAnimationStep : AnimationStep
     {
+        public ZeroAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance
-                .HighlightMethod(Call.CallerClassName, Call.CallerMethodName, true);
+            Animation.HighlightClass(Call.CallerClassName, true);
+            step++;
+            Animation.Step = new FirstAnimationStep(Call);
         }
     }
 
-    class SecondAnimationStep : AnimationStep
+    internal class FirstAnimationStep : AnimationStep
     {
+        public FirstAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance.StartCoroutine(
-                Singleton<AnimArch.Visualization.Animating.Animation>.Instance.AnimateFill(Call));
-            TimeModifier = 0f;
+            Animation.HighlightMethod(Call.CallerClassName, Call.CallerMethodName, true);
+            step++;
+            Animation.Step = new SecondAnimationStep(Call);
         }
     }
 
-    class ThirdAnimationStep : AnimationStep
+    internal class SecondAnimationStep : AnimationStep
     {
+        public SecondAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance.HighlightEdge(Call.RelationshipName, true);
-            TimeModifier = 0.5f;
+            Animation.StartCoroutine(Animation.AnimateFill(Call));
+            step++;
+            Animation.Step = new ThirdAnimationStep(Call);
         }
     }
 
-    class ForthAnimationStep : AnimationStep
+    internal class ThirdAnimationStep : AnimationStep
     {
+        public ThirdAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance
-                .HighlightClass(Call.CallerClassName, true);
-            TimeModifier = 1f;
+            Animation.HighlightEdge(Call.RelationshipName, true);
+            step++;
+            Animation.Step = new ForthAnimationStep(Call);
         }
     }
 
-    class FifthAnimationStep : AnimationStep
+    internal class ForthAnimationStep : AnimationStep
     {
+        public ForthAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            Singleton<AnimArch.Visualization.Animating.Animation>.Instance
-                .HighlightMethod(Call.CallerClassName, Call.CallerMethodName, true);
-            TimeModifier = 1.25f;
+            Animation.HighlightClass(Call.CallerClassName, true);
+            step++;
+            Animation.Step = new FifthAnimationStep(Call);
         }
     }
 
-    class SixthAnimationStep : AnimationStep
+    internal class FifthAnimationStep : AnimationStep
     {
+        public FifthAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
         public override void Execute()
         {
-            AnimArch.Visualization.Animating.Animation animation =
-                Singleton<AnimArch.Visualization.Animating.Animation>.Instance;
-            animation.HighlightClass(Call.CallerClassName, false);
-            animation.HighlightMethod(Call.CallerClassName, Call.CallerMethodName, false);
-            animation.HighlightClass(Call.CalledClassName, false);
-            animation.HighlightMethod(Call.CalledClassName, Call.CalledMethodName, false);
-            animation.HighlightEdge(Call.RelationshipName, false);
-            TimeModifier = 1f;
+            
+            Animation.HighlightMethod(Call.CallerClassName, Call.CallerMethodName, true);
+            step++;
+            Animation.Step = new SixthAnimationStep(Call);
+        }
+    }
+
+    internal class SixthAnimationStep : AnimationStep
+    {
+        public SixthAnimationStep(OALCall call)
+        {
+            Call = call;
+        }
+
+        public override void Execute()
+        {
+            Animation.HighlightClass(Call.CallerClassName, false);
+            Animation.HighlightMethod(Call.CallerClassName, Call.CallerMethodName, false);
+            Animation.HighlightClass(Call.CalledClassName, false);
+            Animation.HighlightMethod(Call.CalledClassName, Call.CalledMethodName, false);
+            Animation.HighlightEdge(Call.RelationshipName, false);
+            step++;
         }
     }
 }

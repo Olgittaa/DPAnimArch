@@ -12,16 +12,17 @@ namespace OALProgramControl
         public String Operation { get; set; }
         public List<EXEASTNode> Operands { get; }
 
-        public static List<List<String>> LeveledOperators = new List<List<String>>(new List<String>[] {
-            new List<String> (new String[] { "and", "or"}),
-            new List<String> (new String[] { "not"}),
-            new List<String> (new String[] { "==", "!="}),
-            new List<String> (new String[] { "empty", "not_empty"}),
-            new List<String> (new String[] { "<=", ">=", "<", ">" }),
-            new List<String> (new String[] { "+", "-"}),
-            new List<String> (new String[] { "*", "/", "%"}),
-            new List<String> (new String[] { "cardinality"}),
-            new List<String> (new String[] { "."})
+        public static List<List<String>> LeveledOperators = new List<List<String>>(new List<String>[]
+        {
+            new List<String>(new String[] {"and", "or"}),
+            new List<String>(new String[] {"not"}),
+            new List<String>(new String[] {"==", "!="}),
+            new List<String>(new String[] {"empty", "not_empty"}),
+            new List<String>(new String[] {"<=", ">=", "<", ">"}),
+            new List<String>(new String[] {"+", "-"}),
+            new List<String>(new String[] {"*", "/", "%"}),
+            new List<String>(new String[] {"cardinality"}),
+            new List<String>(new String[] {"."})
         });
 
         public EXEASTNodeComposite(String Operation)
@@ -29,6 +30,7 @@ namespace OALProgramControl
             this.Operation = Operation;
             this.Operands = new List<EXEASTNode>();
         }
+
         public EXEASTNodeComposite(String Operation, EXEASTNode[] Operands)
         {
             this.Operation = Operation;
@@ -49,6 +51,7 @@ namespace OALProgramControl
         {
             return this.Operation;
         }
+
         public String Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             String Result = null;
@@ -64,10 +67,12 @@ namespace OALProgramControl
                 {
                     EvaluatedOperands.Add(Operand.Evaluate(Scope, ExecutionSpace));
                 }
+
                 if (EvaluatedOperands.Contains(null))
                 {
                     return Result;
                 }
+
                 //If we are returning real number, let's format it so that we don't have trouble with precision
                 Result = Evaluator.Evaluate(this.Operation, EvaluatedOperands);
                 /*Console.Write("AST Composite operation " + this.Operation + " has result ");
@@ -77,8 +82,9 @@ namespace OALProgramControl
                 {
                     return Result;
                 }
-               /* Console.WriteLine("Operation: " + this.Operation);
-                Console.WriteLine("Result of operation" + (Result == null ? "null" : Result));*/
+
+                /* Console.WriteLine("Operation: " + this.Operation);
+                 Console.WriteLine("Result of operation" + (Result == null ? "null" : Result));*/
                 if (EXETypes.RealTypeName.Equals(EXETypes.DetermineVariableType("", Result)))
                 {
                     //Console.WriteLine("is real and needs formatting");
@@ -86,6 +92,7 @@ namespace OALProgramControl
                     {
                         Result = FormatDouble(Result);
                     }
+
                     if (!Result.Contains("."))
                     {
                         Result += ".0";
@@ -96,28 +103,34 @@ namespace OALProgramControl
             else if (HandleEvaluator.IsHandleOperator(this.Operation))
             {
                 Console.WriteLine("We have handle operator");
-                Result = HandleEvaluator.Evaluate(this.Operation, this.Operands.Select(x => ((EXEASTNodeLeaf)x).GetNodeValue()).ToList(), (EXEScope)Scope);
+                Result = HandleEvaluator.Evaluate(this.Operation,
+                    this.Operands.Select(x => ((EXEASTNodeLeaf) x).GetNodeValue()).ToList(), (EXEScope) Scope);
             }
             // If we have access operator - we either access attribute or have decimal number. There are always 2 operands
             else if (".".Equals(this.Operation) && this.Operands.Count == 2)
             {
                 if (EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
-                    && EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
-                )
+                    && EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("",
+                        this.Operands[1].GetNodeValue()))
+                   )
                 {
                     Result = this.Operands[0].GetNodeValue() + "." + this.Operands[1].GetNodeValue();
                 }
-                else if (EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
-                    && EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
-                )
+                else if (EXETypes.ReferenceTypeName.Equals(
+                             EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
+                         && EXETypes.ReferenceTypeName.Equals(
+                             EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
+                        )
                 {
-                    Result = AccessEvaluator.EvaluateAttributeValue(this.Operands[0].GetNodeValue(), this.Operands[1].GetNodeValue(), (EXEScope)Scope, ExecutionSpace);
+                    Result = AccessEvaluator.EvaluateAttributeValue(this.Operands[0].GetNodeValue(),
+                        this.Operands[1].GetNodeValue(), (EXEScope) Scope, ExecutionSpace);
                 }
             }
+
             return Result;
         }
 
-        public bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace)
+        public bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             bool Result = false;
             EXEExpressionEvaluator Evaluator = new EXEExpressionEvaluator();
@@ -134,12 +147,15 @@ namespace OALProgramControl
                         return false;
                     }
                 }
+
                 Result = true;
             }
             // If we have handle operators
             else if (HandleEvaluator.IsHandleOperator(this.Operation))
             {
-                if (this.Operands.Count() == 1 && ((EXEScope)Scope).FindReferenceHandleByName(((EXEASTNodeLeaf)this.Operands[0]).GetNodeValue()) != null)
+                if (this.Operands.Count() == 1 &&
+                    ((EXEScope) Scope).FindReferenceHandleByName(((EXEASTNodeLeaf) this.Operands[0]).GetNodeValue()) !=
+                    null)
                 {
                     Result = true;
                 }
@@ -148,40 +164,50 @@ namespace OALProgramControl
             else if (".".Equals(this.Operation) && this.Operands.Count == 2)
             {
                 if (EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
-                    && EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
-                )
+                    && EXETypes.IntegerTypeName.Equals(EXETypes.DetermineVariableType("",
+                        this.Operands[1].GetNodeValue()))
+                   )
                 {
                     Result = true;
                 }
-                else if (EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
-                    && EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
-                )
+                else if (EXETypes.ReferenceTypeName.Equals(
+                             EXETypes.DetermineVariableType("", this.Operands[0].GetNodeValue()))
+                         && EXETypes.ReferenceTypeName.Equals(
+                             EXETypes.DetermineVariableType("", this.Operands[1].GetNodeValue()))
+                        )
                 {
-                    EXEReferencingVariable Variable = ((EXEScope)Scope).FindReferencingVariableByName(this.Operands[0].GetNodeValue());
+                    EXEReferencingVariable Variable =
+                        ((EXEScope) Scope).FindReferencingVariableByName(this.Operands[0].GetNodeValue());
                     if (Variable == null)
                     {
                         return false;
                     }
+
                     CDClass Class = ExecutionSpace.getClassByName(Variable.ClassName);
                     if (Class == null)
                     {
                         return false;
                     }
+
                     CDAttribute Attribute = Class.GetAttributeByName(this.Operands[1].GetNodeValue());
                     if (Attribute == null)
                     {
                         return false;
                     }
+
                     CDClassInstance Instance = Variable.RetrieveReferencedClassInstance(ExecutionSpace);
                     if (Instance == null)
                     {
                         return false;
                     }
+
                     Result = true;
                 }
             }
+
             return Result;
         }
+
         public void PrintPretty(string indent, bool last)
         {
             Console.Write(indent);
@@ -195,6 +221,7 @@ namespace OALProgramControl
                 Console.Write("|+");
                 indent += "| ";
             }
+
             Console.WriteLine(this.Operation);
 
             for (int i = 0; i < this.Operands.Count; i++)
@@ -233,6 +260,7 @@ namespace OALProgramControl
                     {
                         Result += " " + this.Operation;
                     }
+
                     Boolean UseBrackets = false;
                     if (Operand is EXEASTNodeComposite)
                     {
@@ -243,14 +271,17 @@ namespace OALProgramControl
                         {
                             if (ThisOperatorLevel >= SubOperatorLevel && !this.Operation.Equals(SubOperation))
                             {
-                                    UseBrackets = true;
+                                UseBrackets = true;
                             }
-                            if (UseBrackets && ThisOperatorLevel == SubOperatorLevel && (ThisOperatorLevel == 5 || ThisOperatorLevel == 6))
+
+                            if (UseBrackets && ThisOperatorLevel == SubOperatorLevel &&
+                                (ThisOperatorLevel == 5 || ThisOperatorLevel == 6))
                             {
                                 UseBrackets = false;
                             }
                         }
                     }
+
                     if (UseBrackets)
                     {
                         Result += ("".Equals(Result) ? "" : " ") + "(" + Operand.ToCode() + ")";
@@ -261,6 +292,7 @@ namespace OALProgramControl
                     }
                 }
             }
+
             return Result;
         }
 
@@ -273,6 +305,7 @@ namespace OALProgramControl
                     return i;
                 }
             }
+
             return -1;
         }
     }

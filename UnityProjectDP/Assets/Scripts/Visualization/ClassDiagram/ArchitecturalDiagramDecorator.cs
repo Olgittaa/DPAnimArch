@@ -2,11 +2,16 @@ namespace AnimArch.Visualization.Diagrams
 {
     public class ArchitecturalDiagramDecorator : Diagram
     {
-        protected Diagram _diagram;
+        protected Diagram Diagram;
 
         protected ArchitecturalDiagramDecorator(Diagram diagram)
         {
-            _diagram = diagram;
+            Diagram = diagram;
+        }
+
+        public override void Generate()
+        {
+            Diagram.Generate();
         }
     }
 }

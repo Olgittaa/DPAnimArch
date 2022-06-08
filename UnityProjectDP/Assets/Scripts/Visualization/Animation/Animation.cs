@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using OALProgramControl;
-using TMPro;
-using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using Assets.Scripts.AnimationControl.OAL;
 using AnimArch.Visualization.Diagrams;
+using Assets.Scripts.Visualization.Animation;
 
 namespace AnimArch.Visualization.Animating
 {
@@ -30,6 +28,13 @@ namespace AnimArch.Visualization.Animating
 
         public string startClassName;
         public string startMethodName;
+        // public static AnimationStep step;
+
+        public AnimationStep Step
+        {
+            get => _step;
+            set => _step = value;
+        }
 
         private void Awake()
         {
@@ -96,7 +101,7 @@ namespace AnimArch.Visualization.Animating
                 yield break;
             }
 
-            OALProgram.Instance.SuperScope = MethodExecutableCode;//StartMethod.ExecutableCode
+            OALProgram.Instance.SuperScope = MethodExecutableCode; //StartMethod.ExecutableCode
 
             Debug.Log("Abt to execute program");
             int i = 0;
@@ -122,6 +127,7 @@ namespace AnimArch.Visualization.Animating
 
                 Success = Success && ExecutionSuccess;
             }
+
             Debug.Log("Over");
             this.AnimationIsRunning = false;
         }
@@ -288,11 +294,13 @@ namespace AnimArch.Visualization.Animating
 
         //Couroutine used to Resolve one OALCall consisting of Caller class, caller method, edge, called class, called method
         // Same coroutine is called for play or step mode
-        public IEnumerator ResolveCallFunct(OALCall Call)
+
+
+        private AnimationStep _step;
+        private IEnumerator ResolveCallFunct(OALCall call)
         {
-            int step = 0;
-            float speedPerAnim = AnimationData.Instance.AnimSpeed;
-            while (step < 7)
+            _step = new ZeroAnimationStep(call);
+            while (_step.Check())
             {
                 if (isPaused)
                 {
@@ -300,30 +308,27 @@ namespace AnimArch.Visualization.Animating
                 }
                 else
                 {
-                    switch (step)
-                    {
-                    }
+                    _step.Execute();
 
-                    step++;
                     if (standardPlayMode)
                     {
-                        yield return new WaitForSeconds(AnimationData.Instance.AnimSpeed );
+                        yield return new WaitForSeconds(AnimationData.Instance.AnimSpeed * _step.Step);
                     }
-                    //Else means we are working with step animation
+                    
                     else
                     {
-                        if (step == 2) step = 3;
+                        if (_step.Step == 2) _step.Step = 3;
                         nextStep = false;
                         prevStep = false;
                         yield return new WaitUntil(() => nextStep);
                         if (prevStep)
                         {
-                            if (step > 0) step--;
-                            if (step == 2) step = 1;
-                            ExecuteAnimationStep(Call, step);
-                            if (step > -1) step--;
-                            if (step == 2) step = 1;
-                            ExecuteAnimationStep(Call, step);
+                            if (_step.Step > 0) _step.Step--;
+                            if (_step.Step == 2)_step.Step = 1;
+                            ExecuteAnimationStep(call, _step.Step);
+                            if (_step.Step > -1) _step.Step--;
+                            if (_step.Step == 2) _step.Step = 1;
+                            ExecuteAnimationStep(call, _step.Step);
                         }
 
                         yield return new WaitForFixedUpdate();

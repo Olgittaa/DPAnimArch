@@ -197,7 +197,7 @@ namespace AnimArch.Visualization.Diagrams
             }
         }
         //Create GameObjects from the parsed data sotred in list of Classes and Relations
-        private void Generate()
+        public override void Generate()
         {
             Debug.Log("DIAGRAM CLASSES COUNT" + Classes.Count);
             Debug.Log("RELATION COUNT" + Relations.Count);

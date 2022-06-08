@@ -76,7 +76,8 @@ namespace AnimArch.Visualization.Diagrams
                 Object.VisualObject.GetComponent<RectTransform>().Shift(0, 200 * i++, 0);
             }
         }
-        private void Generate()
+
+        public override void Generate()
         {
             //Render classes
             for (int i = 0; i < Objects.Count; i++)

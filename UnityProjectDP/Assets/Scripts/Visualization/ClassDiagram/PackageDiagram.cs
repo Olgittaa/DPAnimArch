@@ -4,7 +4,7 @@ namespace AnimArch.Visualization.Diagrams
     {
         public PackageDiagram(Diagram diagram) : base(diagram)
         {
-            _diagram = diagram;
+            Diagram = diagram;
         }
 
         public void AddPackages()
