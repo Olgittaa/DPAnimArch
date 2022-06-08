@@ -58,28 +58,20 @@ namespace AnimArch.Visualization.Animating
             }
 
             OALProgram Program = OALProgram.Instance;
-            List<AnimClass> MethodsCodes = selectedAnimation.GetMethodsCodesList(); //Filip
-            string Code = selectedAnimation.Code; //toto potom mozno pojde prec
+            List<AnimClass> MethodsCodes = selectedAnimation.GetMethodsCodesList();
+            string Code = selectedAnimation.Code;
             Debug.Log("Code: ");
             Debug.Log(Code);
 
-            foreach (AnimClass classItem in MethodsCodes) //Filip
+            foreach (AnimClass classItem in MethodsCodes)
             {
                 CDClass Class = Program.ExecutionSpace.getClassByName(classItem.Name);
 
                 foreach (AnimMethod methodItem in classItem.Methods)
                 {
                     CDMethod Method = Class.getMethodByName(methodItem.Name);
-
-                    //ak je methodItem.Code nie je prazdny retazec tak parsuj
-                    //if (!string.IsNullOrWhiteSpace(methodItem.Code))        //toto asi uz nebude potrebne
-                    //{
                     EXEScopeMethod MethodBody = OALParserBridge.Parse(methodItem.Code);
                     Method.ExecutableCode = MethodBody;
-                    //}
-                    /*else {////
-                        Method.ExecutableCode = null;
-                    }///*/
                 }
             }
 
@@ -104,8 +96,7 @@ namespace AnimArch.Visualization.Animating
                 yield break;
             }
 
-            OALProgram.Instance.SuperScope = MethodExecutableCode; //StartMethod.ExecutableCode
-            //OALProgram.Instance.SuperScope = OALParserBridge.Parse(Code); //Method.ExecutableCode dame namiesto OALParserBridge.Parse(Code) pre metodu ktora bude zacinat
+            OALProgram.Instance.SuperScope = MethodExecutableCode;//StartMethod.ExecutableCode
 
             Debug.Log("Abt to execute program");
             int i = 0;
@@ -131,38 +122,6 @@ namespace AnimArch.Visualization.Animating
 
                 Success = Success && ExecutionSuccess;
             }
-
-            /*
-            if (Success)
-            {
-                Debug.Log("We have " + ACS.AnimationSteps.Count() + " anim sequences");
-                foreach (List<AnimationCommand> AnimationSequence in ACS.AnimationSteps)
-                {
-                    BarrierSize = AnimationSequence.Count;
-                    Debug.Log("Filling barrier of size " + BarrierSize);
-                    CurrentBarrierFill = 0;
-                    if (!AnimationSequence.Any())
-                    {
-                        continue;
-                    }
-                    if (AnimationSequence[0].IsCall)
-                    {
-                        foreach (AnimationCommand Command in AnimationSequence)
-                        {
-                            StartCoroutine(Command.Execute());
-                        }
-                        yield return StartCoroutine(BarrierFillCheck());
-                    }
-                    else
-                    {
-                        foreach (AnimationCommand Command in AnimationSequence)
-                        {
-                            Command.Execute();
-                        }
-                    }
-                }
-            }
-            */
             Debug.Log("Over");
             this.AnimationIsRunning = false;
         }
