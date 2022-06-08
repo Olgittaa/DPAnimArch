@@ -148,7 +148,7 @@ namespace OALProgramControl
 
             return Result;
         }
-        public override String ToCode(String Indent = "")
+        public String ToCode(String Indent = "")
         {
             String Result = Indent + "if (" + this.Condition.ToCode() + ")\n";
             foreach (EXECommand Command in this.Commands)

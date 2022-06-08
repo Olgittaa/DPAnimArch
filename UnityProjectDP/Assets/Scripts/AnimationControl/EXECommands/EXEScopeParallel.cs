@@ -84,7 +84,7 @@ namespace OALProgramControl
             return true;
         }
 
-        public override String ToCode(String Indent = "")
+        public String ToCode(String Indent = "")
         {
             String Result = Indent + "par\n";
             if (this.Threads != null)

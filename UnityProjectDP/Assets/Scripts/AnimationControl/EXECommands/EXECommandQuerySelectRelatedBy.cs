@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -57,6 +58,12 @@ namespace OALProgramControl
         {
             return new EXEReferencingSetVariable(VariableName, RelationshipSelection.GetLastClassName());
         }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQuerySelectRelatedBy(this);
+        }
+
         public override string ToCodeSimple()
         {
             string prefix = "select " + this.Cardinality + " " + this.VariableName + " related by ";

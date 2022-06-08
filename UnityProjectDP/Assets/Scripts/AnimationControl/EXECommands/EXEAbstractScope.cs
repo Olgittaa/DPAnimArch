@@ -8,28 +8,18 @@ namespace OALProgramControl
         public List<EXEPrimitiveVariable> PrimitiveVariables;
         public List<EXEReferencingVariable> ReferencingVariables;
         public List<EXEReferencingSetVariable> SetReferencingVariables;
-        public abstract EXEPrimitiveVariable FindPrimitiveVariableByName(String Name);
-        public abstract Dictionary<string, string> GetAllHandleStateAttrsDictRecursive(CDClassPool ExecutionSpace);
-        public abstract bool UnsetReferencingVariables(string ClassName, long InstanceID);
+        public abstract Dictionary<string, string> GetAllHandleStateAttrsDictRecursive(CDClassPool executionSpace);
+        public abstract EXEPrimitiveVariable FindPrimitiveVariableByName(string name);
+        public abstract bool UnsetReferencingVariables(string className, long instanceId);
         public abstract int ValidVariableReferencingCountRecursive();
-        public abstract List<(string, string)> GetReferencingVariablesByIDRecursive(long ID);
-        public abstract void SetSuperScope(EXEScope SuperScope);
-
-        public abstract bool VariableNameExists(String VariableName);
-        public abstract EXEReferencingSetVariable FindSetReferencingVariableByName(String Name);
-        public abstract bool AddVariable(EXEReferencingSetVariable Variable);
-
-        public abstract Boolean DestroyReferencingVariable(String VariableName);
-        public abstract bool AddVariable(EXEPrimitiveVariable Variable);
-        public abstract bool AddVariable(EXEReferencingVariable Variable);
-        public abstract EXEReferencingVariable FindReferencingVariableByName(String Name);
-        public abstract bool AddVariable(EXEReferencingVariable iteratorVariable);
-        public abstract EXEReferencingSetVariable FindSetReferencingVariableByName(string value);
-        public abstract EXEReferencingVariable FindReferencingVariableByName(string value);
-        public abstract bool VariableNameExists(string variableName);
+        public abstract IEnumerable<(string, string)> GetReferencingVariablesByIDRecursive(long id);
+        public abstract bool AddVariable(EXEPrimitiveVariable exePrimitiveVariable);
+        public abstract EXEReferencingVariable FindReferencingVariableByName(string instanceName);
+        public abstract bool AddVariable(EXEReferencingVariable exePrimitiveVariable);
         public abstract bool DestroyReferencingVariable(string tempSelectedVarName);
-        public abstract bool AddVariable(EXEReferencingSetVariable iteratorVariable);
+        public abstract EXEReferencingSetVariable FindSetReferencingVariableByName(string variableName);
+        public abstract bool VariableNameExists(string variableName);
         public abstract EXEReferenceHandle FindReferenceHandleByName(string startingVariable);
-        public abstract bool AddVariable(EXEPrimitiveVariable iteratorVariable);
+        public abstract bool AddVariable(EXEReferencingSetVariable exePrimitiveVariable);
     }
 }

@@ -52,7 +52,7 @@ namespace OALProgramControl
             OALProgram.CommandStack.Enqueue(Commands);
         }
 
-        public override void SetSuperScope(EXEScope SuperScope)
+        public void SetSuperScope(EXEScope SuperScope)
         {
             this.SuperScope = SuperScope;
         }
@@ -275,7 +275,7 @@ namespace OALProgramControl
             }
             else
             {
-                CurrentScope.SuperScope.FindPrimitiveVariableByName(Name);
+                Result = CurrentScope.SuperScope.FindPrimitiveVariableByName(Name);
             }
 
             return Result;
@@ -348,7 +348,7 @@ namespace OALProgramControl
             }
         }
 
-        public override Boolean IsComposite()
+        public Boolean IsComposite()
         {
             return true;
         }
@@ -450,7 +450,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public override List<(String, String)> GetReferencingVariablesByIDRecursive(long ID)
+        public override IEnumerable<(string, string)> GetReferencingVariablesByIDRecursive(long ID)
         {
             List<(String, String)> Vars = new List<(String, String)>();
             foreach (EXEReferencingVariable Var in this.ReferencingVariables)
@@ -489,7 +489,7 @@ namespace OALProgramControl
             }
         }
 
-        public override String ToCode(String Indent = "")
+        public String ToCode(String Indent = "")
         {
             String Result = "";
             foreach (EXECommand Command in this.Commands)

@@ -17,7 +17,6 @@ namespace Assets.Scripts.Visualization.Animation
             set => step = value;
         }
 
-
         public abstract void Execute();
 
         public bool Check()

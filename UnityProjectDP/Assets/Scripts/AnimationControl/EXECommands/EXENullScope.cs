@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -21,17 +22,27 @@ namespace OALProgramControl
             }
         }
 
-        public override EXEPrimitiveVariable FindPrimitiveVariableByName(string Name)
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            return;
+        }
+
+        protected override bool Execute(OALProgram OALProgram)
+        {
+            return false;
+        }
+
+        public override Dictionary<string, string> GetAllHandleStateAttrsDictRecursive(CDClassPool executionSpace)
         {
             return null;
         }
 
-        public override Dictionary<string, string> GetAllHandleStateAttrsDictRecursive(CDClassPool ExecutionSpace)
+        public override EXEPrimitiveVariable FindPrimitiveVariableByName(string name)
         {
-            return new Dictionary<string, string>();
+            return null;
         }
 
-        public override bool UnsetReferencingVariables(string ClassName, long InstanceID)
+        public override bool UnsetReferencingVariables(string className, long instanceId)
         {
             return false;
         }
@@ -41,47 +52,47 @@ namespace OALProgramControl
             return 0;
         }
 
-        public override List<(string, string)> GetReferencingVariablesByIDRecursive(long ID)
+        public override IEnumerable<(string, string)> GetReferencingVariablesByIDRecursive(long id)
         {
             return null;
         }
 
-        public override void SetSuperScope(EXEScope SuperScope) { }
-
-        public override EXEReferencingVariable FindReferencingVariableByName(String Name)
-        {
-            return null;
-        }
-        public override bool VariableNameExists(String VariableName)
+        public override bool AddVariable(EXEPrimitiveVariable exePrimitiveVariable)
         {
             return false;
         }
 
-        public override EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
+        public override EXEReferencingVariable FindReferencingVariableByName(string instanceName)
         {
             return null;
         }
 
-        public override Boolean DestroyReferencingVariable(String VariableName)
+        public override bool AddVariable(EXEReferencingVariable exePrimitiveVariable)
         {
             return false;
         }
 
-        public override bool AddVariable(EXEReferencingSetVariable Variable)
+        public override bool DestroyReferencingVariable(string tempSelectedVarName)
         {
             return false;
         }
 
-        public override bool AddVariable(EXEPrimitiveVariable Variable)
+        public override EXEReferencingSetVariable FindSetReferencingVariableByName(string variableName)
         {
-            return false;
+            return null;
         }
-        public override bool AddVariable(EXEReferencingVariable Variable)
+
+        public override bool VariableNameExists(string variableName)
         {
             return false;
         }
 
-        protected override bool Execute(OALProgram OALProgram)
+        public override EXEReferenceHandle FindReferenceHandleByName(string startingVariable)
+        {
+            return null;
+        }
+
+        public override bool AddVariable(EXEReferencingSetVariable exePrimitiveVariable)
         {
             return false;
         }

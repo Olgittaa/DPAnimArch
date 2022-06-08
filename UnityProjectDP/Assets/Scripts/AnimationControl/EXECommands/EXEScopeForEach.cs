@@ -67,7 +67,7 @@ namespace OALProgramControl
             return Success;
         }
 
-        public override String ToCode(String Indent = "")
+        public String ToCode(String Indent = "")
         {
             String Result = Indent + "for each " + this.IteratorName + " in " + this.IterableName + "\n";
             foreach (EXECommand Command in this.Commands)

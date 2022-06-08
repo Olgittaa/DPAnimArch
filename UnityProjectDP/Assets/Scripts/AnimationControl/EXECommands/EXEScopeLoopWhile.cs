@@ -58,7 +58,7 @@ namespace OALProgramControl
             return Success;
         }
 
-        public override String ToCode(String Indent = "")
+        public String ToCode(String Indent = "")
         {
             String Result = Indent + "while (" + this.Condition.ToCode() + ")\n";
             foreach (EXECommand Command in this.Commands)
