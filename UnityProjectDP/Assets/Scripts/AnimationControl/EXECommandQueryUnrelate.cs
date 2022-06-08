@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -22,6 +23,11 @@ namespace OALProgramControl
         // Based on class names get the CDRelationship from RelationshipSpace
         // Based on variable names get the instance ids from Scope.ReferencingVariables
         // Create relationship between the given instance ids (CDRelationship.CreateRelationship) and return result of it
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQueryUnrelate(this);
+        }
+
         protected override bool Execute(OALProgram OALProgram)
         {
             EXEReferencingVariable Variable1 = SuperScope.FindReferencingVariableByName(this.Variable1Name);

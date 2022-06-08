@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -24,6 +25,11 @@ namespace OALProgramControl
         }
 
         // SetUloh2
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQueryCreate(this);
+        }
+
         protected override bool Execute(OALProgram OALProgram)
         {
             //Create an instance of given class -> will affect ExecutionSpace.

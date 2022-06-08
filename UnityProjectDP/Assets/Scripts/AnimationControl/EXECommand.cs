@@ -1,10 +1,13 @@
 ﻿using System;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
     public abstract class EXECommand
     {
         public EXEAbstractScope SuperScope { get; set; }
+
+        public abstract void Accept(IConvertToCodeVisitor visitor);
 
         public Boolean PerformExecution(OALProgram OALProgram)
         {

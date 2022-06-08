@@ -25,7 +25,7 @@ namespace OALProgramControl
             this.RelationshipSpecification.Add(RelationshipLink);
         }
 
-        public List<long> Evaluate(CDRelationshipPool RelationshipSpace, EXEScope Scope)
+        public List<long> Evaluate(CDRelationshipPool RelationshipSpace, EXEAbstractScope Scope)
         {
             List<long> Result = null;
             EXEReferenceHandle StartVariable = Scope.FindReferenceHandleByName(this.StartingVariable);

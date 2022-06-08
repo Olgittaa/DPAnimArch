@@ -1,4 +1,5 @@
 ﻿using System;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -13,6 +14,11 @@ namespace OALProgramControl
             this.Variable1Name = Variable1Name;
             this.Variable2Name = Variable2Name;
             this.RelationshipName = RelationshipName;
+        }
+        
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQueryRelate(this);
         }
         // Create a relationship instance (between two variables pointing to class instances)
         // Based on class names get the CDRelationship from RelationshipSpace

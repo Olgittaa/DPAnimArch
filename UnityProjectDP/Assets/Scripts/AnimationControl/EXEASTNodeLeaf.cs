@@ -16,7 +16,7 @@ namespace OALProgramControl
         {
             return this.Value;
         }
-        public String Evaluate(EXEScope Scope, CDClassPool ExecutionSpace)
+        public string Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             String Result = null;
 
@@ -59,7 +59,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace)
+        public bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             bool Result = false;
             if (!EXETypes.ReferenceTypeName.Equals(EXETypes.DetermineVariableType("", this.Value)))

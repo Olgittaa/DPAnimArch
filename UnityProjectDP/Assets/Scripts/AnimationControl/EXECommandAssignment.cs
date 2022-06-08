@@ -1,4 +1,5 @@
 ﻿using System;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -19,6 +20,11 @@ namespace OALProgramControl
             this.VariableName = VariableName;
             this.AttributeName = AttributeName;
             this.AssignedExpression = AssignedExpression;
+        }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitAssignment(this);
         }
 
         protected override Boolean Execute(OALProgram OALProgram)

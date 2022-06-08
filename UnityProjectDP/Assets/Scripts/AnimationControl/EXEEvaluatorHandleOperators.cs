@@ -13,7 +13,7 @@ namespace OALProgramControl
             return ValidOperators.Contains(Operator);
         }
 
-        public String Evaluate(String Operator, List<String> Operands, EXEScope Scope)
+        public String Evaluate(String Operator, List<String> Operands, EXEAbstractScope Scope)
         {
             Console.WriteLine("EXEEvaluatorHandleOperators.Evaluate");
             String Result = null;
@@ -49,7 +49,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public String EvaluateEmpty(String Operand, EXEScope Scope)
+        public String EvaluateEmpty(String Operand, EXEAbstractScope Scope)
         {
             String Result = null;
 
@@ -92,7 +92,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public String EvaluateNotEmpty(String Operand, EXEScope Scope)
+        public String EvaluateNotEmpty(String Operand, EXEAbstractScope Scope)
         {
             String Result = null;
             String TempResult = EvaluateEmpty(Operand, Scope);
@@ -108,7 +108,7 @@ namespace OALProgramControl
 
             return Result;
         }
-        public String EvaluateCardinality(String Operand, EXEScope Scope)
+        public String EvaluateCardinality(String Operand, EXEAbstractScope Scope)
         {
             String Result = null;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -26,6 +27,11 @@ namespace OALProgramControl
             this.AttributeName = AttributeName;
             this.CalledMethod = MethodName;
             this.Parameters = Parameters;
+        }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitCall(this);
         }
 
         protected override Boolean Execute(OALProgram OALProgram)
@@ -156,7 +162,7 @@ namespace OALProgramControl
                         return false;
                     }
 
-                    MethodCode.AddVariable(new EXEReferencingVariable(Parameter.Name, ClassDefinition.Name, ID));
+                    ((EXEAbstractScope) MethodCode).AddVariable(new EXEReferencingVariable(Parameter.Name, ClassDefinition.Name, ID));
                 }
             }
 

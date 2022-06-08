@@ -12,8 +12,8 @@ namespace OALProgramControl
         public CDClassPool ExecutionSpace { get; set; }
         public CDRelationshipPool RelationshipSpace { get; set; }
 
-        private EXEScope _SuperScope;
-        public EXEScope SuperScope
+        private EXEAbstractScope _SuperScope;
+        public EXEAbstractScope SuperScope
         {
             get
             {

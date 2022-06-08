@@ -15,7 +15,7 @@ namespace OALProgramControl
         // You will use EXEScope.FindReferencingVariableByName() method, but you need to implement it first
         // user.name
 
-        public String EvaluateAttributeValue(String ReferencingVariableName, String AttributeName, EXEScope Scope, CDClassPool ExecutionSpace)
+        public String EvaluateAttributeValue(String ReferencingVariableName, String AttributeName, EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             EXEReferencingVariable ReferencingVariable = Scope.FindReferencingVariableByName(ReferencingVariableName);
             if (ReferencingVariable == null)
@@ -38,7 +38,7 @@ namespace OALProgramControl
         // You assign it in Scope
         // Return if you could assign it or not
         // EXETypes.determineVariableType()
-        public Boolean SetAttributeValue(String ReferencingVariableName, String AttributeName, EXEScope Scope, CDClassPool ExecutionSpace, String NewValue)
+        public Boolean SetAttributeValue(String ReferencingVariableName, String AttributeName, EXEAbstractScope Scope, CDClassPool ExecutionSpace, String NewValue)
         {
             EXEReferencingVariable ReferencingVariable = Scope.FindReferencingVariableByName(ReferencingVariableName);
             if (ReferencingVariable == null) return false;

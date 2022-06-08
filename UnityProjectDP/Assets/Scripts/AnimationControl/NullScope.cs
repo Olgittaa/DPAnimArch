@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -43,6 +44,51 @@ namespace OALProgramControl
         public override List<(string, string)> GetReferencingVariablesByIDRecursive(long ID)
         {
             return null;
+        }
+
+        public override bool AddVariable(EXEReferencingVariable iteratorVariable)
+        {
+            return false;
+        }
+
+        public override EXEReferencingSetVariable FindSetReferencingVariableByName(string value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override EXEReferencingVariable FindReferencingVariableByName(string value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool VariableNameExists(string variableName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool DestroyReferencingVariable(string tempSelectedVarName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool AddVariable(EXEReferencingSetVariable iteratorVariable)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override EXEReferenceHandle FindReferenceHandleByName(string startingVariable)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool AddVariable(EXEPrimitiveVariable iteratorVariable)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitScope(this);
         }
 
         protected override bool Execute(OALProgram OALProgram)

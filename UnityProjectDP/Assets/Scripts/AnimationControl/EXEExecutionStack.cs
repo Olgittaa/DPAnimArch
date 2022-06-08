@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -15,6 +16,14 @@ namespace OALProgramControl
         {
             this.CommandsToBeCalled = new LinkedList<EXECommand>();
             this.CommandsThatHaveBeenCalled = new Stack<EXECommand>();
+        }
+
+        public void Accept(IConvertToCodeVisitor visitor)
+        {
+            foreach (var command in CommandsToBeCalled)
+            {
+                command.Accept(visitor);
+            }
         }
 
         public void Enqueue(EXECommand Command)

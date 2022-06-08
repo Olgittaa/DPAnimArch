@@ -1,4 +1,5 @@
 ﻿using System;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -9,6 +10,11 @@ namespace OALProgramControl
         public EXECommandQueryDelete(String VariableName)
         {
             this.VariableName = VariableName;
+        }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQueryDelete(this);
         }
 
         protected override bool Execute(OALProgram OALProgram)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -32,6 +33,11 @@ namespace OALProgramControl
         }
 
         // SetUloh2
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitQuerySelect(this);
+        }
+
         protected override bool Execute(OALProgram OALProgram)
         {
             //Select instances of given class that match the criteria and assign them to variable with given name

@@ -49,7 +49,7 @@ namespace OALProgramControl
         {
             return this.Operation;
         }
-        public String Evaluate(EXEScope Scope, CDClassPool ExecutionSpace)
+        public string Evaluate(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             String Result = null;
             EXEExpressionEvaluator Evaluator = new EXEExpressionEvaluator();
@@ -117,7 +117,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool VerifyReferences(EXEScope Scope, CDClassPool ExecutionSpace)
+        public bool VerifyReferences(EXEAbstractScope Scope, CDClassPool ExecutionSpace)
         {
             bool Result = false;
             EXEExpressionEvaluator Evaluator = new EXEExpressionEvaluator();

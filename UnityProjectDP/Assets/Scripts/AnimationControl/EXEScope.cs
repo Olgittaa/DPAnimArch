@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OALProgramControl.Visitor;
 
 namespace OALProgramControl
 {
@@ -32,6 +33,11 @@ namespace OALProgramControl
             {
                 this.AddCommand(Command);
             }
+        }
+
+        public override void Accept(IConvertToCodeVisitor visitor)
+        {
+            visitor.VisitScope(this);
         }
 
         protected override Boolean Execute(OALProgram OALProgram)
@@ -193,7 +199,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEPrimitiveVariable Variable)
+        public override bool AddVariable(EXEPrimitiveVariable Variable)
         {
             bool Result = false;
 
@@ -206,7 +212,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEReferencingVariable Variable)
+        public override bool AddVariable(EXEReferencingVariable Variable)
         {
             bool Result = false;
 
@@ -219,7 +225,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool AddVariable(EXEReferencingSetVariable Variable)
+        public override bool AddVariable(EXEReferencingSetVariable Variable)
         {
             bool Result = false;
 
@@ -232,7 +238,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public bool VariableNameExists(String VariableName)
+        public override bool VariableNameExists(String VariableName)
         {
             bool Result = false;
             if (FindPrimitiveVariableByName(VariableName) != null)
@@ -270,7 +276,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public EXEReferenceHandle FindReferenceHandleByName(String Name)
+        public override EXEReferenceHandle FindReferenceHandleByName(String Name)
         {
             EXEReferenceHandle Result = FindReferencingVariableByName(Name);
             if (Result == null)
@@ -281,7 +287,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public EXEReferencingVariable FindReferencingVariableByName(String Name)
+        public override EXEReferencingVariable FindReferencingVariableByName(String Name)
         {
             EXEReferencingVariable Result = null;
             EXEAbstractScope CurrentScope = this;
@@ -308,7 +314,7 @@ namespace OALProgramControl
             return Result;
         }
 
-        public EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
+        public override EXEReferencingSetVariable FindSetReferencingVariableByName(String Name)
         {
             EXEAbstractScope CurrentScope = this;
 
@@ -419,7 +425,7 @@ namespace OALProgramControl
             return this.SetReferencingVariables.Count;
         }
 
-        public Boolean DestroyReferencingVariable(String VariableName)
+        public override Boolean DestroyReferencingVariable(String VariableName)
         {
             Boolean Result = false;
 
