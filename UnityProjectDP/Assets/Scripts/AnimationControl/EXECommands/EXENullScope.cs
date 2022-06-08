@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace OALProgramControl
 {
-    public class NullScope : EXEAbstractScope
+    public class EXENullScope : EXEAbstractScope
     {
-        private static NullScope _instance;
+        private static EXENullScope _instance;
 
-        private NullScope()
+        private EXENullScope()
         {
         }
 
-        public static NullScope Instance
+        public static EXENullScope Instance
         {
             get
             {
                 if (_instance == null)
-                    return new NullScope();
+                    return new EXENullScope();
                 return _instance;
             }
         }

@@ -15,7 +15,7 @@ namespace OALProgramControl
             this.PrimitiveVariables = new List<EXEPrimitiveVariable>();
             this.ReferencingVariables = new List<EXEReferencingVariable>();
             this.SetReferencingVariables = new List<EXEReferencingSetVariable>();
-            this.SuperScope = NullScope.Instance;
+            this.SuperScope = EXENullScope.Instance;
             this.Commands = new List<EXECommand>();
         }
 
