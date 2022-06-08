@@ -20,8 +20,6 @@ namespace OALProgramControl
         public abstract bool AddVariable(EXEReferencingSetVariable Variable);
 
         public abstract Boolean DestroyReferencingVariable(String VariableName);
-
-
         public abstract bool AddVariable(EXEPrimitiveVariable Variable);
         public abstract bool AddVariable(EXEReferencingVariable Variable);
         public abstract EXEReferencingVariable FindReferencingVariableByName(String Name);
